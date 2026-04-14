@@ -76,7 +76,6 @@ class Bitrix24 {
         }
 
         $payload = http_build_query([
-            'auth' => $auth,
             'CONNECTOR' => Config::CONNECTOR_ID,
             'USER_ID' => "{$channel}{$channelChatId}",
             'MESSAGE' => $firstMessage,
@@ -87,7 +86,7 @@ class Bitrix24 {
         ]);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, Config::BX_PORTAL . '/rest/imconnector.message.add');
+        curl_setopt($ch, CURLOPT_URL, Config::BX_PORTAL . '/rest/imconnector.message.add.json?auth=' . $auth);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -120,14 +119,13 @@ class Bitrix24 {
         if (!$auth) return;
 
         $payload = http_build_query([
-            'auth' => $auth,
             'CONNECTOR' => $connector,
             'DIALOG_ID' => $dialog,
             'MESSAGE' => $message,
         ]);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, Config::BX_PORTAL . '/rest/imconnector.message.add');
+        curl_setopt($ch, CURLOPT_URL, Config::BX_PORTAL . '/rest/imconnector.message.add.json?auth=' . $auth);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -146,7 +144,6 @@ class Bitrix24 {
         if (!$auth) return 0;
 
         $payload = http_build_query([
-            'auth' => $auth,
             'fields[TITLE]' => $title,
             'fields[NAME]' => $name,
             'fields[SOURCE_ID]' => $source,
@@ -155,7 +152,7 @@ class Bitrix24 {
         ]);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, Config::BX_PORTAL . '/rest/crm.lead.add');
+        curl_setopt($ch, CURLOPT_URL, Config::BX_PORTAL . '/rest/crm.lead.add.json?auth=' . $auth);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -175,19 +172,99 @@ class Bitrix24 {
         if (!$auth) return;
 
         $payload = http_build_query([
-            'auth' => $auth,
             'ENTITY_TYPE' => 'LEAD',
             'ENTITY_ID' => $leadId,
             'COMMENT' => $comment,
         ]);
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, Config::BX_PORTAL . '/rest/crm.timeline.comment.add');
+        curl_setopt($ch, CURLOPT_URL, Config::BX_PORTAL . '/rest/crm.timeline.comment.add.json?auth=' . $auth);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_exec($ch);
         curl_close($ch);
+    }
+
+    /**
+     * Универсальный REST API вызов
+     * ВАЖНО: auth передаётся в URL (?auth=TOKEN), а не в POST-теле
+     *
+     * @param string $method REST метод (напр. 'crm.lead.add', 'tasks.task.add')
+     * @param array $params POST-параметры (без auth)
+     * @return array|null Результат или null при ошибке
+     */
+    public static function api(string $method, array $params = []): ?array {
+        $auth = Config::getAuthId();
+        if (!$auth) {
+            Logger::entry('error', ['message' => 'No AUTH_ID for API call: ' . $method]);
+            return null;
+        }
+
+        $url = Config::BX_PORTAL . '/rest/' . $method . '.json?auth=' . $auth;
+        $payload = http_build_query($params);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        $result = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        Logger::entry('bx_api', ['method' => $method, 'http' => $httpCode, 'result' => $result]);
+
+        $data = json_decode($result, true);
+        if (isset($data['error'])) {
+            Logger::entry('bx_api_error', ['method' => $method, 'error' => $data['error'], 'desc' => $data['error_description'] ?? '']);
+        }
+        return $data;
+    }
+
+    /**
+     * Создать задачу
+     *
+     * @param string $title Заголовок задачи
+     * @param int $responsibleId ID исполнителя
+     * @param string $description Описание
+     * @param string|null $deadline Дедлайн (формат Y-m-d H:i:s)
+     * @return int|null ID задачи или null
+     */
+    public static function createTask(string $title, int $responsibleId, string $description = '', ?string $deadline = null): ?int {
+        $fields = [
+            'fields[TITLE]' => $title,
+            'fields[RESPONSIBLE_ID]' => $responsibleId,
+            'fields[CREATED_BY]' => $responsibleId,
+        ];
+        if ($description) {
+            $fields['fields[DESCRIPTION]'] = $description;
+        }
+        if ($deadline) {
+            $fields['fields[DEADLINE]'] = $deadline;
+        }
+
+        $result = self::api('tasks.task.add', $fields);
+        return isset($result['result']['task']['id'])
+            ? (int)$result['result']['task']['id']
+            : null;
+    }
+
+    /**
+     * Получить пользователя по ID
+     */
+    public static function getUser(int $userId): ?array {
+        $result = self::api('profile', ['userId' => $userId]);
+        return $result['result'] ?? null;
+    }
+
+    /**
+     * Получить текущего пользователя
+     */
+    public static function getCurrentUser(): ?array {
+        $result = self::api('user.current');
+        return $result['result'] ?? null;
     }
 }
