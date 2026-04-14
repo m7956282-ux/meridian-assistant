@@ -96,10 +96,19 @@ class Config {
      * Загрузить AUTH_ID из файла
      */
     public static function getAuthId(): ?string {
-        $tokenFile = __DIR__ . '/bitrix_token.json';
-        if (file_exists($tokenFile)) {
-            $data = json_decode(file_get_contents($tokenFile), true);
-            return $data['access_token'] ?? null;
+        // Пробуем несколько путей для токена
+        $paths = [
+            __DIR__ . '/../config/bitrix_token.json',  // /webhook/config/
+            __DIR__ . '/bitrix_token.json',             // рядом с config.php
+            dirname(__DIR__, 2) . '/config/bitrix_token.json',
+        ];
+        foreach ($paths as $tokenFile) {
+            if (file_exists($tokenFile)) {
+                $data = json_decode(file_get_contents($tokenFile), true);
+                if (!empty($data['access_token'])) {
+                    return $data['access_token'];
+                }
+            }
         }
         return null;
     }

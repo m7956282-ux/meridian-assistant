@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; }
+  .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a237e, #3949ab); padding: 40px 30px; text-align: center; }
+  .header h1 { color: #ffffff; margin: 0; font-size: 28px; font-weight: 600; }
+  .header .subtitle { color: #bbdefb; font-size: 16px; margin-top: 10px; }
+  .logo { font-size: 18px; color: #90caf9; letter-spacing: 2px; margin-bottom: 20px; }
+  .content { padding: 40px 30px; }
+  .content h2 { color: #1a237e; font-size: 22px; margin-top: 0; }
+  .content p { color: #333; line-height: 1.7; font-size: 16px; margin: 16px 0; }
+  .highlight { background: #e8eaf6; border-left: 4px solid #3949ab; padding: 20px; margin: 24px 0; border-radius: 0 8px 8px 0; }
+  .highlight h3 { color: #1a237e; margin: 0 0 12px; font-size: 18px; }
+  .benefits { list-style: none; padding: 0; margin: 20px 0; }
+  .benefits li { padding: 10px 0 10px 36px; position: relative; font-size: 16px; color: #333; border-bottom: 1px solid #eee; }
+  .benefits li:last-child { border-bottom: none; }
+  .benefits li::before { content: '✅'; position: absolute; left: 0; top: 10px; font-size: 18px; }
+  .stats { display: flex; justify-content: space-around; background: #f8f9ff; padding: 24px; margin: 24px 0; border-radius: 12px; text-align: center; }
+  .stat-item { flex: 1; padding: 0 12px; }
+  .stat-item .number { font-size: 32px; font-weight: 700; color: #1a237e; }
+  .stat-item .label { font-size: 13px; color: #666; margin-top: 6px; }
+  .cta { text-align: center; margin: 32px 0; }
+  .cta-button { display: inline-block; background: linear-gradient(135deg, #1a237e, #3949ab); color: #ffffff !important; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-size: 18px; font-weight: 600; }
+  .cta p { color: #666; font-size: 14px; margin-top: 12px; }
+  .footer { background: #f5f5f5; padding: 24px 30px; text-align: center; border-top: 1px solid #eee; }
+  .footer p { color: #888; font-size: 13px; margin: 4px 0; }
+  .footer a { color: #3949ab; text-decoration: none; }
+  .divider { height: 1px; background: linear-gradient(to right, transparent, #ddd, transparent); margin: 24px 0; }
+  .price-compare { display: flex; gap: 16px; margin: 24px 0; }
+  .price-card { flex: 1; padding: 20px; border-radius: 12px; text-align: center; }
+  .price-card.human { background: #ffebee; border: 1px solid #ef9a9a; }
+  .price-card.ai { background: #e8f5e9; border: 1px solid #a5d6a7; }
+  .price-card .price { font-size: 28px; font-weight: 700; margin: 8px 0; }
+  .price-card.human .price { color: #c62828; }
+  .price-card.ai .price { color: #2e7d32; }
+  .price-card .title { font-size: 14px; color: #666; }
+  @media only screen and (max-width: 480px) {
+    .stats { flex-direction: column; }
+    .price-compare { flex-direction: column; }
+    .header h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">AI AUTOMATION</div>
+    <h1>Ваш бизнес может работать без вас</h1>
+    <div class="subtitle">Автоматизация с помощью искусственного интеллекта</div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <h2>Сколько времени тратят ваши сотрудники на рутину?</h2>
+    <p>
+      Каждый день ваши менеджеры отвечают на одни и те же вопросы, обрабатывают заявки, ведут CRM и создают отчёты. Это занимает до <strong>70% рабочего времени</strong>.
+    </p>
+    <p>
+      <strong>Искусственный интеллект</strong> делает это за секунды — 24/7, без больничных и выходных.
+    </p>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-item">
+        <div class="number">3×</div>
+        <div class="label">Быстрее обработка заявок</div>
+      </div>
+      <div class="stat-item">
+        <div class="number">80%</div>
+        <div class="label">Снижение расходов на персонал</div>
+      </div>
+      <div class="stat-item">
+        <div class="number">24/7</div>
+        <div class="label">Работа без перерывов</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Сравнение цен -->
+    <h2 style="text-align:center;">ИИ vs Сотрудник</h2>
+    <div class="price-compare">
+      <div class="price-card human">
+        <div class="title">👤 Сотрудник</div>
+        <div class="price">60 000 ₽/мес</div>
+        <div class="title">Зарплата + налоги + рабочее место</div>
+        <div class="title" style="margin-top:8px;">8 часов в день, 5 дней в неделю</div>
+      </div>
+      <div class="price-card ai">
+        <div class="title">🤖 AI-ассистент</div>
+        <div class="price">15 000 ₽/мес</div>
+        <div class="title">Без налогов и больничных</div>
+        <div class="title" style="margin-top:8px;">24/7, без перерывов</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Что можем автоматизировать -->
+    <div class="highlight">
+      <h3>🚀 Что мы автоматизируем:</h3>
+      <ul class="benefits">
+        <li>Обработка входящих заявок и обращений</li>
+        <li>Создание и ведение сделок в CRM</li>
+        <li>Автоматические ответы клиентам</li>
+        <li>Формирование отчётов и аналитика</li>
+        <li>Напоминания и контроль задач</li>
+        <li>Рассылки и коммуникация с клиентами</li>
+      </ul>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Результат -->
+    <h2>Что вы получите:</h2>
+    <p>
+      ✅ <strong>Разгрузите штат</strong> — ИИ возьмёт рутину на себя<br>
+      ✅ <strong>Увольте ленивых</strong> — роботы не опаздывают и не болеют<br>
+      ✅ <strong>Экономия до 80%</strong> — ИИ стоит дешевле зарплаты<br>
+      ✅ <strong>Масштабирование</strong> — один ИИ заменяет целую команду
+    </p>
+
+    <!-- CTA -->
+    <div class="cta">
+      <a href="mailto:g26.orel@yandex.ru?subject=Интересует%20AI-автоматизация" class="cta-button">
+        📩 Написать ответное письмо
+      </a>
+      <p>Договоримся о <strong>бесплатной консультации</strong></p>
+      <p style="margin-top: 8px;">Расскажем, какие процессы можно автоматизировать в вашем бизнесе</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <p style="text-align:center; color:#999; font-size:14px; font-style:italic;">
+      P.S. Консультация бесплатна и ни к чему не обязывает.<br>
+      Просто напишите — мы подскажем, с чего начать.
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p><strong>Меридиан Ассистент</strong> — AI-автоматизация для бизнеса</p>
+    <p><a href="https://meridian-18.ru">meridian-18.ru</a></p>
+    <p style="margin-top:12px;">📞 +7 (939) 887-74-69 &nbsp;|&nbsp; ✉️ zakaz@meridian-18.ru</p>
+    <p style="margin-top:12px; color:#bbb; font-size:11px;">
+      Если вы получили это письмо по ошибке — просто проигнорируйте его.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
