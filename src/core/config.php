@@ -9,9 +9,18 @@ class Config {
     public const CONNECTOR_NAME = 'Меридиан Ассистент';
 
     // AI Model (настраивается)
-    public const AI_MODEL = 'openai'; // openai | yandex | claude
-    public const AI_API_KEY = ''; // Установить через env
+    // Поддерживаемые: openai, deepseek, qwen, yandex, claude
+    public const AI_MODEL = 'openai';
+    public const AI_API_KEY = '';
     public const AI_API_URL = 'https://api.openai.com/v1/chat/completions';
+
+    // DeepSeek
+    public const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+    public const DEEPSEEK_MODEL = 'deepseek-chat';
+
+    // Qwen (DashScope / Alibaba)
+    public const QWEN_API_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+    public const QWEN_MODEL = 'qwen-plus';
 
     // Каналы
     public const CHANNELS = [
@@ -100,5 +109,26 @@ class Config {
      */
     public static function getAiApiKey(): string {
         return getenv('AI_API_KEY') ?: self::AI_API_KEY;
+    }
+
+    /**
+     * Получить модель AI
+     */
+    public static function getAiModel(): string {
+        return getenv('AI_MODEL') ?: self::AI_MODEL;
+    }
+
+    /**
+     * Получить DeepSeek API Key
+     */
+    public static function getDeepSeekApiKey(): string {
+        return getenv('DEEPSEEK_API_KEY') ?: '';
+    }
+
+    /**
+     * Получить Qwen API Key
+     */
+    public static function getQwenApiKey(): string {
+        return getenv('QWEN_API_KEY') ?: '';
     }
 }
