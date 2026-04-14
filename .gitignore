@@ -1,0 +1,8 @@
+/vendor/
+/logs/
+*.log
+/config/bitrix_token.json
+/config/chats.json
+.env
+.DS_Store
+*.swp
